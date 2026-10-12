@@ -1,68 +1,40 @@
-const express = require ("express") ; // 1. charger la biblioth èque Express
-const app = express () ; // 2. créer l’ application : c’est notre serveur
+const express = require('express'); // 1. Charger la bibliothèque Express
+const articleRoutes = require('./routes/articleRoutes');
+const userRoutes = require('./routes/userRoutes');
+
+const app = express(); // 2. Créer l'application : c'est notre serveur
 const PORT = 3000;
-app . use( express . json () ) ; // lit le corps JSON et le range dans req. body
 
-// 3. une route : quand un client demande GET / , Express exécute cette fonction
-app . get("/", (req , res) => {
-    res.json ({ message : " Bonjour , je suis l’API du blog " }) ;
-}) ;
+// Middleware global
+// Il permet de lire le corps JSON et de le récupérer dans req.body
+app.use(express.json());
 
-// Nos donn ées. Elles reviennent à l’état initial à chaque redé marrage :
-// MongoDB les rendra permanentes à la sé ance 3.
-const articles = [
-{ id: 1 , title : "Bienvenue sur le blog ", author : "Admin" } ,
-{ id: 2 , title : "Mon premier serveur Express ", author : "Aya" } ,
-{ id: 3 , title : "Tester une API avec Postman ", author : "Aya" }
-];
+// Montage du routeur sous le préfixe '/api/articles'
+app.use('/api/articles', articleRoutes);
+app.use('/api/users', userRoutes);
+/*
+ * 3. Route d'accueil :
+ * Quand un client demande GET '/',
+ * Express exécute cette fonction.
+ */
+app.get('/', (req, res) => {
+    res.json({
+        message: "API du Blog - Serveur Modulaire Opérationnel (SoC)"
+    });
+});
 
-
-// GET /api/articles?author=Aya -> seulement ceux d'Aya
-app.get('/api/articles', (req, res) => {
-  const { author } = req.query;   // = const author = req.query.author;
-
-  let resultat = articles;
-  if (author) {                   // si le client a précisé ?author=...
-    resultat = articles.filter(a => a.author === author);
-  }
-  res.json({ total: resultat.length, articles: resultat });
+/*
+ * 4. Démarrer le serveur :
+ * Le serveur attend les requêtes sur le port 3000.
+ */
+app.listen(PORT, () => {
+    console.log(`Serveur modulaire en écoute sur http://localhost:${PORT}`);
 });
 
 
-// GET / api/ articles -> tous les articles
-app . get("/api/articles", (req , res) => {
-res . json ({ total : articles . length , articles : articles }) ;
-}) ;
-
-// GET /api/articles/2 -> l'article dont l'id vaut 2
-app.get('/api/articles/:id', (req, res) => {
-  const id = Number(req.params.id);          // "2" -> 2
-  const article = articles.find(a => a.id === id);
-
-  if (!article) {
-    return res.status(404).json({ error: `Article ${id} introuvable` });
-  }
-  res.json(article);
-});
 
 
-let prochainId = 4; // le prochain id à attribuer ( les ids 1 , 2 et 3 existent déjà)
-// POST / api/ articles -> crée un article avec { " title ": "..." , " author ": "..." }
-app.post('/api/articles', (req, res) => {
-  const { title, author } = req.body;  
-
-    if (!title || !author) {
-        return res.status(400).json({ error: "title et author sont obligatoires" });
-    }
-
-  const nouvelArticle = { id: prochainId, title: title, author: author };
-  prochainId++;
-  articles.push(nouvelArticle);
-  res.status(201).json(nouvelArticle);
-}) ;    
-
-
-
+/*
 // GET /about
 app.get('/about', (req, res) => {
     res.json({
@@ -142,10 +114,6 @@ app.post('/contact', (req, res) => {
     });
 });
 
+*/
 
 
-
-// 4. démarrer le serveur : il attend les requ ê tes sur le port 3000
-app . listen (PORT , () => {
-console.log(`Serveur disponible sur http :// localhost :${ PORT }`) ;
-}) ;
