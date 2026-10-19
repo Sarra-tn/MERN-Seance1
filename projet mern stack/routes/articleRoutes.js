@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const articleController = require('../controllers/articleController');
+const articleController = require('../src/controllers/articleController');
 
 // Remarque capitale : Le préfixe '/api/articles' sera défini dans server.js.
 // Ici, '/' représente donc la racine de la ressource : '/api/articles' !
@@ -18,3 +18,6 @@ router.put('/:id', articleController.updateArticle);
 router.delete('/:id', articleController.deleteArticle);
 
 module.exports = router;
+
+
+

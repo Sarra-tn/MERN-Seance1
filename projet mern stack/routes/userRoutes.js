@@ -2,16 +2,18 @@ const express = require('express');
 
 const router = express.Router();
 
-const userController = require('../controllers/userController');
+const userController = require('../src/controllers/userController');
 
 // Remarque capitale : Le préfixe '/api/articles' sera défini dans server.js.
 // Ici, '/' représente donc la racine de la ressource : '/api/articles' !
 
-router.get('/', userController.getAllUsers);
+//router.get('/', userController.getAllUsers);
 
 router.get('/:id', userController.getUserById);
 
 router.post('/', userController.createUser);
+
+router.get('/', userController.getUsers);
 
 router.delete('/:id', userController.deleteUser);
 
